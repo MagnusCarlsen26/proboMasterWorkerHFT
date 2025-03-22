@@ -42,6 +42,8 @@ def send_data( available_qty: int, eventId: int ):
 if __name__ == "__main__":
     
     EVENT_ID = 3824790
+    
+    while True:
 
-    available_qty = get_available_qty( eventId = EVENT_ID )
-    send_data( available_qty, eventId = EVENT_ID )
+        available_qty = get_available_qty( eventId = EVENT_ID )
+        send_data( available_qty, eventId = EVENT_ID )
