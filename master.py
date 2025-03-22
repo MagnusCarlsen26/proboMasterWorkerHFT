@@ -23,22 +23,25 @@ async def save_data_async(payload):
     event_id = payload['eventId']
     timestamp = payload['timestamp']
     
-    # Create data directory if it doesn't exist
     os.makedirs("data", exist_ok=True)
     
-    # Create directory for event if it doesn't exist
     event_dir = os.path.join("data", f"event_{event_id}")
     os.makedirs(event_dir, exist_ok=True)
     print(payload["available_qty"])
-    async with DB_LOCK: 
-        # Save data to event-specific files
-        yes_file = os.path.join(event_dir, "db_yes.csv")
-        no_file = os.path.join(event_dir, "db_no.csv")
-        
-        with open(yes_file, "a") as f:
-            f.write(f"{timestamp},{transform_data(payload['available_qty']['buy'])}\n")
-        with open(no_file, "a") as f:
-            f.write(f"{timestamp},{transform_data(payload['available_qty']['sell'])}\n")
+
+    try :
+
+        async with DB_LOCK: 
+            yes_file = os.path.join(event_dir, "db_yes.csv")
+            no_file = os.path.join(event_dir, "db_no.csv")
+            
+            with open(yes_file, "a") as f:
+                f.write(f"{timestamp},{transform_data(payload['available_qty']['buy'])}\n")
+            with open(no_file, "a") as f:
+                f.write(f"{timestamp},{transform_data(payload['available_qty']['sell'])}\n")
+
+    except Exception as e:
+        print(e)
 
 def transform_data(book):
     keys = [i/2 for i in range(1,20)]
