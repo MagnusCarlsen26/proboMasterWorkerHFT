@@ -1,17 +1,17 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-import asyncio
+import threading
 load_dotenv()
 
 app = Flask(__name__)
 
-DB_LOCK = asyncio.Lock()
+DB_LOCK = threading.Lock()
 
 @app.route('/save_data', methods=['GET'])
 def save_data():
     payload = request.json
-    asyncio.run(save_data_async(payload))
+    save_data_sync(payload)
     
     return jsonify({"message": "Data received", "payload": payload})
 
@@ -19,7 +19,7 @@ def save_data():
 def test():
     return jsonify({"message": "Data received"})
 
-async def save_data_async(payload):
+def save_data_sync(payload):
     event_id = payload['eventId']
     timestamp = payload['timestamp']
     
@@ -29,9 +29,8 @@ async def save_data_async(payload):
     os.makedirs(event_dir, exist_ok=True)
     print(payload["available_qty"])
 
-    try :
-
-        async with DB_LOCK: 
+    try:
+        with DB_LOCK: 
             yes_file = os.path.join(event_dir, "db_yes.csv")
             no_file = os.path.join(event_dir, "db_no.csv")
             
