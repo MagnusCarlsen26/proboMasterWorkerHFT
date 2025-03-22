@@ -14,7 +14,7 @@ HEADERS = {
 }
 
 PROBO_URL = "https://prod.api.probo.in/api/v3/tms/trade/bestAvailablePrice?eventId={eventId}"
-MASTER_URL = "http://127.0.0.1:5000/save_data"
+MASTER_URL = os.getenv("MASTER_URL")
 
 def get_available_qty( eventId: int ):
     
